@@ -67,101 +67,27 @@ int sendmail(char *email_message)
 {
   int status = 0;
   char message[MESSAGE_SIZE + 1];
-  logger(TRACE, "Sending email");
-  if (email_message == NULL)
+  logger(TRACE, "Start sending email");
+  quickmail_initialize();
+  quickmail mailobj = quickmail_create(FROM, "libquickmail test e-mail");
+  quickmail_add_to(mailobj, TO);
+  quickmail_add_header(mailobj, "Importance: Low");
+  quickmail_add_header(mailobj, "X-Priority: 5");
+  quickmail_add_header(mailobj, "X-MSMail-Priority: Low");
+  quickmail_set_body(mailobj, "Alarm");
+  // quickmail_add_body_memory(mailobj, "text/html", "This is a <b>test</b> e-mail.<br/>\nThis mail was sent using <u>libquickmail</u>.", 80, 0);
+  quickmail_add_body_memory(mailobj, "text/html", email_message,
+                            strlen(email_message), 0);
+  quickmail_add_attachment_memory(mailobj, "test.log", NULL, "Test\n123", 8, 0);
+  const char *errmsg;
+  if ((errmsg =
+       quickmail_send(mailobj, SMTPSERVER, SMTPPORT, SMTPUSER,
+                      SMTPPASS)) != NULL)
   {
-    logger(WARN, "Email message is NULL. Not sending.");
-    status = 1;
-  } else
-  {
-    int quickmail_status = 0;
-    snprintf(message, MESSAGE_SIZE, "libquickmail %s\n",
-             quickmail_get_version());
-    logger(INFO, message);
-
-    quickmail_status = quickmail_initialize();
-    if (quickmail_status == 0)
-    {
-      logger(DEBUG, "quickmail_create");
-      quickmail mailobj = quickmail_create(FROM, "libquickmail test e-mail");
-      if (mailobj == NULL)
-      {
-        logger(ERROR, "quickmail_create mailobj failed");
-      }
-      logger(DEBUG, "quickmail_create 0");
-#ifdef TO
-      quickmail_add_to(mailobj, TO);
-#endif
-#ifdef CC
-      quickmail_add_cc(mailobj, CC);
-#endif
-#ifdef BCC
-      quickmail_add_bcc(mailobj, BCC);
-#endif
-      logger(DEBUG, "quickmail_create 1");
-      quickmail_add_header(mailobj, "Importance: Low");
-      quickmail_add_header(mailobj, "X-Priority: 5");
-      quickmail_add_header(mailobj, "X-MSMail-Priority: Low");
-      quickmail_set_body(mailobj,
-                         "This is a test e-mail.\nThis mail was sent using libquickmail.");
-      logger(DEBUG, "quickmail_create 2");
-
-      //quickmail_add_body_memory(mailobj, NULL, "This is a test e-mail.\nThis mail was sent using libquickmail.", 64, 0);
-
-     
-      char *mymess =
-        "This is a <b>test</b> e-mail.<br/>\nThis html mail was sent using <u>libquickmail</u>, %s";
-      int len = strlen(email_message) + strlen(mymess) - 2;
-
-      char send_message[SEND_MESSAGE_SIZE];
-      snprintf(send_message, SEND_MESSAGE_SIZE, mymess, email_message);
-
-      snprintf(message, MESSAGE_SIZE, "len %i %i", len, strlen(send_message));
-      logger(DEBUG,message);
-
-      /*
-         quickmail_add_body_memory(mailobj, "text/html",
-         "This is a <b>test</b> e-mail.<br/>\nThis html mail was sent using <u>libquickmail</u>.",
-         80, 0);
-       */
-      quickmail_add_body_memory(mailobj, "text/html", send_message,
-                                strlen(send_message), 0);
-
-      logger(DEBUG, "sendmail 1");
-
-       /**/
-//   quickmail_add_attachment_file(mailobj, "test_quickmail.c", NULL);
-//   quickmail_add_attachment_file(mailobj, "test_quickmail.cbp", NULL);
-/*
-        if (fileExists("/var/www/html/pictur/a.jpg"))
-      {
-        quickmail_add_attachment_file(mailobj, "/var/www/html/pictur/a.jpg",
-                                      NULL);
-      }
-*/
-        logger(DEBUG, "sendmail 2");
-      quickmail_add_attachment_memory(mailobj, "test.log", NULL, "Test\n123", 8,
-                                      0);
-      logger(DEBUG, "sendmail 3");
-       /**/ const char *errmsg;
-      //  quickmail_set_debug_log(mailobj, stderr);
-
-      errmsg =
-        quickmail_send(mailobj, SMTPSERVER, SMTPPORT, SMTPUSER, SMTPPASS);
-
-      logger(DEBUG, "quickmail_send");
-      if (errmsg != NULL)
-      {
-        snprintf(message, MESSAGE_SIZE, "Error sending e-mail: %s\n", errmsg);
-        logger(ERROR, message);
-      }
-      quickmail_destroy(mailobj);
-    } else
-    {
-      logger(ERROR, "Quickmail initialize failed");
-    }
-    quickmail_cleanup();
-    logger(TRACE, "Sent email!");
+    fprintf(stderr, "Error sending e-mail: %s\n", errmsg);
   }
-  return status;
+  quickmail_destroy(mailobj);
+  quickmail_cleanup();
+  logger(TRACE, "Sending email finish");
+  return 0;
 }

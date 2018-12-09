@@ -54,7 +54,9 @@ int main(int argc, char **argv)
 
   // Blink for init
   blinkInit();
+  led1OFF();
   led1blink();
+
 
   // Setup interrupt  
   wiringPiISR(DHTPIN, INT_EDGE_BOTH, &alarmInterrupt);
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
     delay(20 * 60 * 1000);
     if (emailCounter > 200)
     {
+      logger(INFO, "EmailCounter > 200. Program ends");
       break;
     }
   }
@@ -93,19 +96,21 @@ void alarmInterrupt()
     arpdata = arp_detect();
 
     /* funkar
-    arpdata = calloc(512,sizeof(char));
-    if (snprintf(arpdata,14+1,"%s", "Dummy ARP data") >= 14)
-    {
+       arpdata = calloc(512,sizeof(char));
+       if (snprintf(arpdata,14+1,"%s", "Dummy ARP data") >= 14)
+       {
        logger(ERROR, "Not enough space!");
-    }
+       }
      */
-    
-    sendmail(arpdata);
+
+//    sendmail(arpdata);
+    char new_arpdata[501];
+    strncpy(new_arpdata, arpdata, 500);
     logger(INFO, "free start");
     free(arpdata);
-    
     logger(INFO, "free end");
     arpdata = NULL;
+    sendmail(new_arpdata);
 
     emailCounter++;
     lastDetection = true;
