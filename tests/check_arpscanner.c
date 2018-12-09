@@ -13,7 +13,7 @@ void test_send_mail();
 
 int main(int argc, char **argv)
 {
-  test_send_mail();
+  //test_send_mail();
   test_arp_scanner();
   return 0;
 }
@@ -46,4 +46,5 @@ void test_arp_scanner()
   {
     printf("Failed\n");
   }
+  free(arpdata);
 }
