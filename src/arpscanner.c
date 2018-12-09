@@ -41,6 +41,7 @@ char *arp_detect()
     } else
     {
       close(p[1]);              // Close reads from pipe
+      int loop = 0;
       while ((nbytes = read(p[0], inbuf, MSGSIZE)) > 0)
       {
         printf("inbuf:%s\n", inbuf);
@@ -52,6 +53,9 @@ char *arp_detect()
 #endif
 
         arpdata = (char *) realloc(arpdata, size + 1);
+#ifdef NDEBUG
+        printf("----->>>Address = %u\n", arpdata);
+#endif
         if (arpdata == NULL)
         {
           logger(ERROR, "Could not allocate arpdata");
@@ -59,15 +63,27 @@ char *arp_detect()
           break;
         } else
         {
-          strncat(arpdata, inbuf, nbytes);
+          if (loop == 0)
+          {
+            strncpy(arpdata, inbuf, nbytes);
+          } else
+          {
+            strncat(arpdata, inbuf, nbytes);
+          }
 #ifdef NDEBUG
           printf("arpdata:%s\n", arpdata);
 #endif
         }
+        loop++;
       }
     }
   }
   logger(TRACE, "End procedure arp_detect");
+#ifdef NDEBUG
+  printf("\n\n*************************\nString = %s,  Address = %u\n", arpdata,
+         arpdata);
+#endif
+
   return arpdata;
 }
 
