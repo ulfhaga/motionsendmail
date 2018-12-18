@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-I. 
-#CFLAGS=-I. -DDEBUG -DTEST -g 
+#CFLAGS=-I. -D DEBUG -D TEST -g 
 DEPS=motion.h mailalarm.h log.h leds.h arpscanner.h
 SOURCE=motionmail.c motion.c mailalarm.c log.c leds.c arpscanner.c
 OBJ=motionmail.o motion.o mailalarm.o log.o leds.o arpscanner.o

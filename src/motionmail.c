@@ -41,6 +41,13 @@ void alarmInterrupt();
 int main(int argc, char **argv)
 {
   logger(INFO, "Raspberry Pi alarm program started");
+  
+  #ifdef DEBUG   
+     printf("Debug run\n");
+    #else
+       printf("Release run\n");
+    #endif
+    
   int status = 1;
 
   // Use  wiringPi pin 
@@ -86,22 +93,32 @@ void alarmInterrupt()
 
   if ((detection == true) && (lastDetection == false))
   {
+    lastDetection = true;
     logger(INFO, "Alarm interrupt rising");
-    logger(DEBUG, "Set led on!");
+    logger(DBG, "Set led on!");
     led1ON();
-    logger(INFO, "Sending email!");
+
 
 
     char *arpdata;
-    arpdata = arp_detect();
-
-    /* funkar
+    
+    arp_detection();
+    
+     ARP_DATA* result;
+   result = arp_parse(1);
+   
+    /*
+    char *xxxxxx = arp_detect();
+    free (xxxxxx);
+*/
+    
+    // funkar
        arpdata = calloc(512,sizeof(char));
-       if (snprintf(arpdata,14+1,"%s", "Dummy ARP data") >= 14)
+       if (snprintf(arpdata,14+1,"%s", result->IP) < 7)
        {
        logger(ERROR, "Not enough space!");
        }
-     */
+     
 
 //    sendmail(arpdata);
     char new_arpdata[501];
@@ -110,16 +127,16 @@ void alarmInterrupt()
     free(arpdata);
     logger(INFO, "free end");
     arpdata = NULL;
+    logger(INFO, "Sending email!");
     sendmail(new_arpdata);
-
     emailCounter++;
-    lastDetection = true;
+
   }
 
   if ((detection == false) && (lastDetection == true))
   {
     logger(INFO, "Alarm interrupt falling");
-    logger(DEBUG, "Set led off!");
+    logger(DBG, "Set led off!");
     led1OFF();
     lastDetection = false;
   }

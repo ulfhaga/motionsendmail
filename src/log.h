@@ -5,7 +5,7 @@
 #define ERROR "Error"
 #define WARN  "Warning"
 #define INFO "Info"
-#define DEBUG "Debug"
+#define DBG "Debug"
 #define TRACE "Trace"
 
 
