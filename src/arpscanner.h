@@ -5,6 +5,7 @@
 #define  ARP_DATA_IP_SIZE 15
 #define  ARP_DATA_MAC_SIZE  17
 #define  ARP_DATA_DEVICE_SIZE  100
+#define  ARP_DATA_MAX_SIZE  100
 
 typedef struct ARP_DATA {
   char IP[ARP_DATA_IP_SIZE+1];
@@ -19,11 +20,9 @@ void arp_detection();
 char * get_line(const char * buf);
 char * point_next_line(const char * buf);
 ARP_DATA* arp_parse(int number);
-
-
-
-
 ARP_DATA* parse_line_arp_data(const char * buf);
+void arp_cleanup();
+int arp_hosts();
 
 #endif  
 
