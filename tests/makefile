@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-I. -I../src -D DEBUG -DTEST -g 
+CFLAGS=-I. -I../src -DTRACE -g 
+#CFLAGS=-I. -I../src -D DEBUG -DTEST -g 
 #CFLAGS=-I. -I../src 
 SOURCE=check_aprscanner.c 
 OBJ=../src/arpscanner.o ../src/mailalarm.o ../src/log.o check_arpscanner.o 
