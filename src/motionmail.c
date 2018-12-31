@@ -40,8 +40,6 @@ static volatile uint emailCounter = 0;
  * https://github.com/WiringPi/WiringPi/blob/master/examples/isr.c
  */
 
-
-
 int main(int argc, char **argv)
 {
   logger(INFO, "Raspberry Pi alarm program started");
@@ -72,11 +70,6 @@ int main(int argc, char **argv)
   // Setup interrupt  
   wiringPiISR(DHTPIN, INT_EDGE_BOTH, &alarmInterrupt);
 
-
-
-alarmInterrupt();
-return 0;
-
   // Wait for interrupts
   while (true)
   {
@@ -100,27 +93,20 @@ void alarmInterrupt()
 
   detection = motion_detect();
 
-//  if ((detection == true) && (lastDetection == false))
+  if ((detection == true) && (lastDetection == false))
   {
+    bool sendMail = true;
+    char *arpdata;
+    int number_of_hosts;
+
     lastDetection = true;
     logger(INFO, "Alarm interrupt rising");
     logger(DBG, "Set led on!");
     led1ON();
 
-
-
-    char *arpdata;
-
     arp_detection();
-
-
-
-    int number_of_hosts;
     number_of_hosts = arp_hosts();
-
     arpdata = calloc(ARP_SIZE, sizeof(char));
-
-
 
     for (int i = 1; i <= number_of_hosts; i++)
     {
@@ -129,56 +115,39 @@ void alarmInterrupt()
       result = arp_parse(i);
       if (result != NULL)
       {
-      snprintf(line, ARP_DATA_IP_SIZE + 4, "IP:%s", result->IP);
-      strcat(arpdata, line);
+        snprintf(line, ARP_DATA_IP_SIZE + 4, "IP:%s", result->IP);
+        strcat(arpdata, line);
 
-      snprintf(line, ARP_DATA_MAC_SIZE + 6, " MAC:%s", result->MAC);
-      strcat(arpdata, line);
+        if (strcmp(result->IP, "192.168.1.126") == 0)
+        {
+          sendMail = false;
+          logger(INFO, "IP 192.168.1.126 found");
+        }
 
-      snprintf(line, ARP_DATA_DEVICE_SIZE + 9, " Name:%s !", result->device);
-      strcat(arpdata, line);
+        snprintf(line, ARP_DATA_MAC_SIZE + 6, " MAC:%s", result->MAC);
+        strcat(arpdata, line);
 
-      strcat(arpdata, "<br />");
-      strcat(arpdata, "\n");
-      // logger(INFO, "***********************************");
-      //   logger(INFO, arpdata);
-      free(result);
-      result = NULL;
+        snprintf(line, ARP_DATA_DEVICE_SIZE + 9, " Name:%s !", result->device);
+        strcat(arpdata, line);
+
+        strcat(arpdata, "<br />");
+        strcat(arpdata, "\n");
+
+        free(result);
+        result = NULL;
       }
     }
 
-    sendmail(arpdata);
+    if (sendMail)
+    {
+      sendmail(arpdata);
+    }
     logger(INFO, "free start");
     free(arpdata);
     logger(INFO, "free end");
     arpdata = NULL;
     arp_cleanup();
-
-    /*
-       char *xxxxxx = arp_detect();
-       free (xxxxxx);
-     */
-
-    // funkar
-
-    /*    arpdata = calloc(512,sizeof(char));
-       if (snprintf(arpdata,14+1,"%s", result->IP) < 7)
-       {
-       logger(ERROR, "Not enough space!");
-       }
-     */
-
-//    sendmail(arpdata);
-    // char new_arpdata[501];
-    // strncpy(new_arpdata, arpdata, 500);
-    // logger(INFO, "free start");
-    // free(arpdata);
-    //  logger(INFO, "free end");
-    // arpdata = NULL;
-    // logger(INFO, "Sending email!");
-    // sendmail(new_arpdata);
     emailCounter++;
-
   }
 
   if ((detection == false) && (lastDetection == true))

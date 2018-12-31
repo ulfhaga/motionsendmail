@@ -20,7 +20,7 @@ clean:
 
 .PHONY: indent
 indent:
-	indent -kr -bl -bli0 -ci2 -cli2 -i2 -l80 -nut *.c 
+	indent -kr -bl -bli0 -ci2 -cli2 -i2 -l80 -nut -nce *.c 
 
 .PHONY: indent1
 indent1:

@@ -26,20 +26,15 @@ int main(int argc, char **argv)
 #else
   printf("Release run\n");
 #endif
-  //test_send_mail();
-  //  test_arp_scanner();
-//  test_arp_scanner_get_line();
-//  test_point_next_line();
-  // test_parse_line_arp_data();
+  // test_send_mail();
+  test_arp_scanner();
+  test_arp_scanner_get_line();
+  test_point_next_line();
+  test_parse_line_arp_data();
   test_arp_parse();
-//test_arp_hosts();
-
-
+  test_arp_hosts();
   return 0;
 }
-
-
-
 
 void test_send_mail()
 {
@@ -51,13 +46,14 @@ void test_send_mail()
 void test_arp_hosts()
 {
   int number_of_hosts;
-   arp_detection();
-  
+  arp_detection();
+
   number_of_hosts = arp_hosts();
   if (number_of_hosts > 0)
   {
     printf("Successful number of hosts %i \n", number_of_hosts);
-  } else
+  }
+  else
   {
     printf("Failed number of hosts. %i\n", number_of_hosts);
   }
@@ -75,7 +71,8 @@ void test_parse_line_arp_data()
   if (strcmp(arp_data->IP, "192.168.1.201") == 0)
   {
     printf("Successful IP\n");
-  } else
+  }
+  else
   {
     printf("Failed IP. Result:%s\n", arp_data->IP);
   }
@@ -85,7 +82,8 @@ void test_parse_line_arp_data()
   if (strcmp(arp_data->MAC, "20:d5:bf:0b:f3:3f") == 0)
   {
     printf("Successful MAC\n");
-  } else
+  }
+  else
   {
     printf("Failed MAC. Result:%s\n", arp_data->MAC);
   }
@@ -94,7 +92,8 @@ void test_parse_line_arp_data()
   if (strcmp(arp_data->device, "Samsung Eletronics Co., Ltd") == 0)
   {
     printf("Successful device\n");
-  } else
+  }
+  else
   {
     printf("Failed device. Result:%s\n", arp_data->device);
   }
@@ -110,7 +109,8 @@ void test_point_next_line()
   if (strcmp(line, "abc") == 0)
   {
     printf("Successful\n");
-  } else
+  }
+  else
   {
     printf("Result:\n%s", line);
     printf("Failed\n");
@@ -121,13 +121,16 @@ void test_arp_scanner()
 {
   printf("Test of arpscanner\n");
   char *arpdata;
-  arpdata = arp_detect();
+  arp_detection();
+  arpdata = get_arpdata();
+  
   if (strlen(arpdata) > 0)
   {
     if (strncmp("Interface:", arpdata, 10) == 0)
     {
       printf("Successful\n");
-    } else
+    }
+    else
     {
       printf("Result:\n%s", arpdata);
       printf("Failed\n");
@@ -135,7 +138,8 @@ void test_arp_scanner()
 #ifdef NDEBUG
     printf("Result:\n%s", arpdata);
 #endif
-  } else
+  }
+  else
   {
     printf("Failed\n");
   }
@@ -150,7 +154,8 @@ void test_arp_scanner_get_line()
   if (strcmp("123456789", line) == 0)
   {
     printf("Successful\n");
-  } else
+  }
+  else
   {
     printf("Result:\n%s", line);
   }
@@ -162,7 +167,8 @@ void test_arp_scanner_get_line()
   if (line == NULL)
   {
     printf("Successful\n");
-  } else
+  }
+  else
   {
     printf("Failed\n");
     printf("Result:\n%s\n", line);
@@ -175,9 +181,9 @@ void test_arp_parse()
 {
 
   ARP_DATA *result = NULL;
- 
- #if 1
-   arp_detection();
+
+#if 1
+  arp_detection();
   result = arp_parse(5000);
   if (result == NULL)
   {
@@ -185,31 +191,32 @@ void test_arp_parse()
   }
   else
   {
-     printf("Failed! %s\n",result);
+    printf("Failed! %s\n", result);
   }
- 
+
   free(result);
   result = NULL;
   arp_cleanup();
-  
-  #endif 
- 
- 
+
+#endif
+
+
   arp_detection();
   result = arp_parse(1);
   if (strlen(result->IP) > 5)
   {
     printf("Successful IP:%s\n", result->IP);
-  } else
+  }
+  else
   {
     printf("Failed:\n%s", result->IP);
   }
   free(result);
   result = NULL;
   arp_cleanup();
-  
 
- 
+
+
   arp_detection();
   result = arp_parse(2);
   if (result == NULL)
@@ -218,28 +225,18 @@ void test_arp_parse()
   }
   else
   {
-  if (strlen(result->IP) > 5)
-  {
-    printf("Successful IP:%s\n", result->IP);
-  } else
-  {
-    printf("Failed:\n%s", result->IP);
+    if (strlen(result->IP) > 5)
+    {
+      printf("Successful IP:%s\n", result->IP);
+    }
+    else
+    {
+      printf("Failed:\n%s", result->IP);
+    }
+    free(result);
+    result = NULL;
+    arp_cleanup();
   }
-  free(result);
-  result = NULL;
-  arp_cleanup();
-  }
-  
-  
-  
-  
-  
+
 }
 
-/*
-void parse_arp_data()
-{
-    char str1[]= "To be or not to be";
-    char *data = "Interface: eth0, datalink type: EN10MB (Ethernet)\nStarting arp-scan 1.9 with 256 hosts (http://www.nta-monitor.com/tools/arp-scan/)\n192.168.1.1 c4:ea:1d:e4:ed:8c (Unknown)\n192.168.1.201 20:d5:bf:0b:f3:3f Samsung Eletronics Co., Ltd\n192.168.1.243 b8:27:eb:84:10:91 Raspberry Pi Foundation\n\n3 packets received by filter, 0 packets dropped by kernel;\n"  
-}
- */

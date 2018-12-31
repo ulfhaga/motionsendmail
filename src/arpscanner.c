@@ -31,9 +31,9 @@ void arp_detection()
   if (pipe(p) < 0)
   {
     logger(ERROR, "pipe");
-  } else
+  }
+  else
   {
-
     /* continued */
     pid = fork();
 
@@ -41,7 +41,8 @@ void arp_detection()
     {
       logger(ERROR, "fork");
 
-    } else
+    }
+    else
     {
       if (pid == 0)
       {
@@ -52,7 +53,8 @@ void arp_detection()
         execl("/usr/bin/arp-scan", "--interface=wlan0", "--localnet",
               "--numeric", "--ignoredups", NULL);
         wait(&sleep);           // Sleep 
-      } else
+      }
+      else
       {
         close(p[1]);            // Close reads from pipe
 
@@ -79,7 +81,8 @@ void arp_detection()
             logger(ERROR, "Could not allocate arpdata");
             perror("Could not allocate arpdata");
             break;
-          } else
+          }
+          else
           {
             strncat(arpdata, inbuf, nbytes);
 #ifdef DEBUG
@@ -98,108 +101,34 @@ void arp_detection()
 #endif
           arpdata[size] = '\0';
         }
+
+        if ((arpdata != NULL) && (strncmp("Interface:", arpdata, 10) != 0))
+        {
+          logger(ERROR, "Detection of apr scan failed");
+          logger(ERROR, arpdata);
+          free(arpdata);
+          arpdata = NULL;
+        }
+
       }
     }
   }
 
-#if defined(DEBUG) || defined(TRACE)
+#if defined(DEBUG)
   printf("\nPackage>>\n%s>>Package\n", arpdata);
 #endif
   logger(TRACE, "End procedure arp_detect");
 }
 
-char *arp_detect()
+
+char *get_arpdata()
 {
-  char *arpdata;
-  char inbuf[MSGSIZE];
-  size_t size = 0;
-  int p[2], pid;
-  ssize_t nbytes;
-  int sleep = 20;
-  arpdata = NULL;
-
-  logger(TRACE, "Start procedure arp_detect");
-
-  if (pipe(p) < 0)
-  {
-    logger(ERROR, "pipe");
-    perror("pipe");
-  } else
-  {
-
-    /* continued m */
-    if ((pid = fork()) > 0)
-    {
-      close(p[0]);              // close reading end in the child
-      dup2(p[1], 1);            // send stdout to the pipe
-      dup2(p[1], 2);            // send stderr to the pipe
-      close(p[1]);              // this descriptor is no longer needed
-      execl("/usr/bin/arp-scan", "--interface=wlan0", "--localnet", "--numeric",
-            "--ignoredups", NULL);
-      wait(&sleep);             // Sleep 20 s 
-    } else
-    {
-      close(p[1]);              // Close reads from pipe
-      int loop = 0;
-
-
-      while ((nbytes = read(p[0], inbuf, MSGSIZE)) > 0)
-      {
-        size += (size_t) nbytes;
-#ifdef DEBUG
-        printf("inbuf:%s\n", inbuf);
-        printf("nbytes:%i\n", nbytes);
-        printf("size:%i\n", size);
-        printf("address arpdata:%u\n", arpdata);
-#endif
-        arpdata = (char *) realloc(arpdata, size + 1);
-#ifdef DEBUG
-        printf("----->>>Address = %u\n", arpdata);
-#endif
-        if (arpdata == NULL)
-        {
-          logger(ERROR, "Could not allocate arpdata");
-          perror("Could not allocate arpdata");
-          break;
-        } else
-        {
-          if (loop == 0)
-          {
-            strncpy(arpdata, inbuf, nbytes);
-          } else
-          {
-            strncat(arpdata, inbuf, nbytes);
-          }
-#ifdef DEBUG
-          printf("arpdata:%s\n", arpdata);
-#endif
-        }
-        loop++;
-      }                         //while
-
-      if ((arpdata != NULL) && size > 0)
-      {
-#ifdef DEBUG
-        printf("inbuf:%s\n", inbuf);
-        printf("nbytes:%i\n", nbytes);
-        printf("size:%i\n", size);
-        printf("address arpdata:%u\n", arpdata);
-#endif
-        arpdata[size] = '\0';
-      }
-    }
-  }
-  logger(TRACE, "End procedure arp_detect");
-
-#ifdef DEBUG
-  printf("\n\n*************************\nPackage:\n%s  \nAddress = %u\n",
-         arpdata, (unsigned int) arpdata);
-#endif
-
-  logger(TRACE, "End procedure arp_detect");
-  return arpdata;
+  char *dest;
+  size_t size = strlen(arpdata);
+  dest = malloc(size + 1);
+  memcpy(dest, arpdata, size + 1);
+  return dest;
 }
-
 
 ARP_DATA *parse_line_arp_data(const char *buf)
 {
@@ -249,7 +178,9 @@ ARP_DATA *parse_line_arp_data(const char *buf)
     }
 
     // Get device name
-    for (int j = 0; (i < n) && (line[i] != '\0') && (line[i] != '\t') && (line[i] != '\n'); i++, j++)
+    for (int j = 0;
+         (i < n) && (line[i] != '\0') && (line[i] != '\t') && (line[i] != '\n');
+         i++, j++)
     {
       arp_data->device[j] = line[i];
     }
@@ -317,11 +248,13 @@ char *get_line(const char *buf)
     if (i > 0)
     {
       strncpy(line, buf, i);
-    } else
+    }
+    else
     {
       line = NULL;
     }
-  } else
+  }
+  else
   {
     line = NULL;
   }
@@ -337,18 +270,19 @@ int arp_hosts()
   number = 0;
   if (arpdata != NULL)
   {
-    char *buf = arpdata;
-    char *buf1 = point_next_line(buf);
-    char *tmp = buf1;
+    char *arpdata_start = arpdata;
+    char *arpdata_second_line = point_next_line(arpdata_start);
+    char *line = arpdata_second_line;
     while (true)
     {
       char *current;
-      current = point_next_line(tmp);
-      tmp = current;
-      if ((tmp == NULL) || (*tmp == '\n'))
+      current = point_next_line(line);
+      line = current;
+      if ((line == NULL) || (*line == '\n'))
       {
         break;
-      } else
+      }
+      else
       {
         number++;
       }
@@ -369,21 +303,21 @@ ARP_DATA *arp_parse(int number)
   {
     char *current;
     bool parse = false;
-    char *buf = arpdata;
-    char *buf1 = point_next_line(buf);
-    char *tmp = buf1;
+    char *arpdata_start = arpdata;
+    char *arpdata_second_line = point_next_line(arpdata_start);
+    char *line = arpdata_second_line;
     for (int i = 1; i <= number; i++)
     {
-      current = point_next_line(tmp);
-      tmp = current;
-      if ((tmp == NULL) || (*tmp == '\n'))
+      current = point_next_line(line);
+      line = current;
+      if ((line == NULL) || (*line == '\n'))
       {
         parse = false;
         break;
       }
       else
       {
-          parse = true;
+        parse = true;
       }
     }
     if (parse)
@@ -395,27 +329,7 @@ ARP_DATA *arp_parse(int number)
   return result;
 }
 
-#define BUFSIZE 9
-void print_buf(char *buf)
-{
-  int i;
-  char c;
-  for (i = 0; i < BUFSIZE; i++)
-  {
-    c = buf[i];
-    if (c == '\0')
-    {
-      printf("\\0");
-
-    } else
-    {
-      printf("%c", buf[i]);
-    }
-  }
-  printf("\n");
-}
-
-// Get the new line
+// Clean up
 void arp_cleanup()
 {
   free(arpdata);

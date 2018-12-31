@@ -30,7 +30,8 @@ int logToFile()
   {
     fprintf(stderr, "Value of errno: %d\n", errno);
     fprintf(stderr, "Error opening file: %s\n", strerror(errno));
-  } else
+  }
+  else
   {
     fclose(fp);
   }

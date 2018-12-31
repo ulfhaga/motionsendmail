@@ -14,15 +14,14 @@ typedef struct ARP_DATA {
 } ARP_DATA;
 
 
-
-char * arp_detect();
 void arp_detection();
 char * get_line(const char * buf);
 char * point_next_line(const char * buf);
 ARP_DATA* arp_parse(int number);
 ARP_DATA* parse_line_arp_data(const char * buf);
-void arp_cleanup();
 int arp_hosts();
+char * get_arpdata();
+void arp_cleanup();
 
 #endif  
 
