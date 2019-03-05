@@ -20,6 +20,7 @@
 #include "log.h"
 #include "arpscanner.h"
 #include "motionmail.h"
+#include "takepicture.h"
 
 
 static volatile uint globalCounter = 0;
@@ -148,6 +149,9 @@ void alarmInterrupt()
     arpdata = NULL;
     arp_cleanup();
     emailCounter++;
+
+    // Take a picture
+    take_picture();
   }
 
   if ((detection == false) && (lastDetection == true))

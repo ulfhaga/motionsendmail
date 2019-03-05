@@ -3,7 +3,8 @@ CFLAGS=-I. -I../src -DTRACE -g
 #CFLAGS=-I. -I../src -D DEBUG -DTEST -g 
 #CFLAGS=-I. -I../src 
 SOURCE=check_aprscanner.c 
-OBJ=../src/arpscanner.o ../src/mailalarm.o ../src/log.o check_arpscanner.o 
+OBJ=../src/arpscanner.o ../src/mailalarm.o ../src/takepicture.o ../src/log.o check_arpscanner.o 
+DEPS=../src/arpscanner.h ../src/mailalarm.h ../src/log.h ../src/takepicture.h check_arpscanner.h 
 LDFLAGS = -Wl,-rpath -Wl,/usr/local/lib  -lwiringPi -lquickmail
 LINT=cppcheck --language=c --enable=warning,style,unusedFunction,information --template=gcc 
 

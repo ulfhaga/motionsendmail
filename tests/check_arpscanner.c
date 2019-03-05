@@ -8,6 +8,7 @@
 #include "arpscanner.h"
 #include "mailalarm.h"
 #include "motionmail.h"
+#include "takepicture.h"
 
 
 void test_arp_scanner();
@@ -17,7 +18,7 @@ void test_point_next_line();
 void test_parse_line_arp_data();
 void test_arp_parse();
 void test_arp_hosts();
-
+void test_take_picture();
 
 int main(int argc, char **argv)
 {
@@ -33,6 +34,7 @@ int main(int argc, char **argv)
   test_parse_line_arp_data();
   test_arp_parse();
   test_arp_hosts();
+  test_take_picture();
   return 0;
 }
 
@@ -240,3 +242,7 @@ void test_arp_parse()
 
 }
 
+void test_take_picture() 
+{
+  take_picture(); 
+}
