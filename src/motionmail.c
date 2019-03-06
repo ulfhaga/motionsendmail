@@ -141,8 +141,15 @@ void alarmInterrupt()
 
     if (sendMail)
     {
-      sendmail(arpdata);
+      char ref_last_picture[] = "<a href=\"http://213.89.244.188/picture/latest.jpg\">Sista bilden</a> <br>";
+      size_t len = strlen(ref_last_picture) + strlen(arpdata) ;
+      char *mail_message = calloc(len + 1, sizeof(char));
+      strcpy(mail_message, ref_last_picture);
+      strcat(mail_message, arpdata);
+      sendmail(mail_message);
+      free (mail_message);
     }
+    
     logger(INFO, "free start");
     free(arpdata);
     logger(INFO, "free end");
