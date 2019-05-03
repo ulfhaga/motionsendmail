@@ -25,14 +25,21 @@
 #include <stdio.h>
 #include "log.h"
 
-#define FROM        "ulf.haga@icloud.com"
+#define FROM        "ulf.haga@gmail.com"
 #define TO          "ulf.haga@icloud.com"
 //#define CC          "otheruser@domain.com"
 //#define BCC         "otheruser@domain.com"
-#define SMTPSERVER  "mailout.comhem.se"
-#define SMTPPORT    25
-#define SMTPUSER    NULL
-#define SMTPPASS    NULL
+//#define SMTPSERVER  "mailout.comhem.se"
+#define SMTPSERVER  "smtp.gmail.com"
+//#define SMTPPORT    25
+#define SMTPPORT    587
+
+//#define SMTPUSER    NULL
+//#define SMTPPASS    NULL
+
+#define SMTPUSER  "ulf.haga@gmail.com"
+#define SMTPPASS  "ulferik2"
+
 #define MESSAGE_SIZE 128
 #define SEND_MESSAGE_SIZE 2000
 
