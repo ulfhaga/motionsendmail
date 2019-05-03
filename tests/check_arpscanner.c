@@ -27,14 +27,14 @@ int main(int argc, char **argv)
 #else
   printf("Release run\n");
 #endif
-  // test_send_mail();
-  test_arp_scanner();
+  test_send_mail();
+  /*test_arp_scanner();
   test_arp_scanner_get_line();
   test_point_next_line();
   test_parse_line_arp_data();
   test_arp_parse();
   test_arp_hosts();
-  test_take_picture();
+  test_take_picture();*/
   return 0;
 }
 
