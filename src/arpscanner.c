@@ -52,7 +52,9 @@ void arp_detection()
         close(p[1]);            // this descriptor is no longer needed
         execl("/usr/bin/arp-scan", "--interface=wlan0", "--localnet",
               "--numeric", "--ignoredups", NULL);
+        logger(ERROR, "arp_detection execl failed");
         wait(&sleep);           // Sleep 
+        _exit (EXIT_FAILURE);
       }
       else
       {
