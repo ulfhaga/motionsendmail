@@ -37,8 +37,8 @@
 //#define SMTPUSER    NULL
 //#define SMTPPASS    NULL
 
-#define SMTPUSER  "ulf.haga@gmail.com"
-#define SMTPPASS  "ulferik2"
+#define SMTPUSER  "kalle.anderson@gmail.com"
+#define SMTPPASS  "Ksjhuyahf76d5a"
 
 #define MESSAGE_SIZE 128
 #define SEND_MESSAGE_SIZE 2000
