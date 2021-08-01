@@ -25,20 +25,31 @@
 #include <stdio.h>
 #include "log.h"
 
-#define FROM        "ulf.haga@gmail.com"
+#define FROM        "ulf.haga@yahoo.com"
+// #define FROM        "ulf.haga@gmail.com"
+//#define FROM        "ulf.haga.adtoox@gmail.com"
+
+
 #define TO          "ulf.haga@icloud.com"
 //#define CC          "otheruser@domain.com"
 //#define BCC         "otheruser@domain.com"
 //#define SMTPSERVER  "mailout.comhem.se"
-#define SMTPSERVER  "smtp.gmail.com"
+//#define SMTPSERVER  "smtp.gmail.com"
+#define SMTPSERVER  "smtp.mail.yahoo.com"
 //#define SMTPPORT    25
 #define SMTPPORT    587
+//#define SMTPPORT    465
 
 //#define SMTPUSER    NULL
 //#define SMTPPASS    NULL
 
-#define SMTPUSER  "kalle.anderson@gmail.com"
-#define SMTPPASS  "Ksjhuyahf76d5a"
+// #define SMTPUSER  "ulf.haga.adtoox@gmail.com"
+// #define SMTPPASS  "Kaka@123"
+
+// https://login.yahoo.com .Du kan ta bort applösenordet här för att ta bort pis åtkomst till ditt konto om du slutar använda pi.
+#define SMTPUSER  "ulf.haga@yahoo.com"
+#define SMTPPASS  "aeisozveijiwqgtr"
+
 
 #define MESSAGE_SIZE 128
 #define SEND_MESSAGE_SIZE 2000
@@ -81,7 +92,7 @@ int sendmail(char *email_message)
   quickmail_add_header(mailobj, "Importance: Low");
   quickmail_add_header(mailobj, "X-Priority: 5");
   quickmail_add_header(mailobj, "X-MSMail-Priority: Low");
-  quickmail_set_body(mailobj, "Alarm");
+  quickmail_set_body(mailobj, "Hem alarm");
   // quickmail_add_body_memory(mailobj, "text/html", "This is a <b>test</b> e-mail.<br/>\nThis mail was sent using <u>libquickmail</u>.", 80, 0);
   quickmail_add_body_memory(mailobj, "text/html", email_message,
                             strlen(email_message), 0);
@@ -92,6 +103,7 @@ int sendmail(char *email_message)
                       SMTPPASS)) != NULL)
   {
     fprintf(stderr, "Error sending e-mail: %s\n", errmsg);
+    fprintf(stderr, "SMTPSERVER: %s\n", SMTPSERVER);
   }
   quickmail_destroy(mailobj);
   quickmail_cleanup();

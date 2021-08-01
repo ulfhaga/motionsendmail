@@ -10,7 +10,6 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <signal.h>
-#include <unistd.h>
 #include <sys/reboot.h>
 #include <stdbool.h>
 
@@ -21,7 +20,6 @@
 #include "arpscanner.h"
 #include "motionmail.h"
 #include "takepicture.h"
-
 
 static volatile uint globalCounter = 0;
 static volatile bool detection = false;
@@ -46,11 +44,15 @@ int main(int argc, char **argv)
   logger(INFO, "Raspberry Pi alarm program started");
 
 #ifdef DEBUG
-  printf("Debug run\n");
+  //intf("INFO: Debug run\n");
+  logger(INFO,"Debug run");
 #else
-  printf("Release run\n");
+  logger(INFO,"Release run");
 #endif
 
+ // pid_t pid = getpid();
+ // storePid(pid);
+  
   int status = 1;
 
   // Use  wiringPi pin 

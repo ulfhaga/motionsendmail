@@ -1,9 +1,9 @@
 CC=gcc
 CFLAGS=-I. 
 #CFLAGS=-I. -D DEBUG -D TEST -g 
-DEPS=motion.h mailalarm.h log.h leds.h arpscanner.h takepicture.h
-SOURCE=motionmail.c motion.c mailalarm.c log.c leds.c arpscanner.c takepicture.c
-OBJ=motionmail.o motion.o mailalarm.o log.o leds.o arpscanner.o takepicture.o
+DEPS=motion.h mailalarm.h log.h leds.h arpscanner.h takepicture.h pid.h
+SOURCE=motionmail.c motion.c mailalarm.c log.c leds.c arpscanner.c takepicture.c pid.c
+OBJ=motionmail.o motion.o mailalarm.o log.o leds.o arpscanner.o takepicture.o pid.o
 LDFLAGS = -Wl,-rpath -Wl,/usr/local/lib  -lwiringPi -lquickmail
 LINT=cppcheck --language=c --enable=warning,style,unusedFunction,information --template=gcc 
 
